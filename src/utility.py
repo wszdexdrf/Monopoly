@@ -20,6 +20,7 @@ class Utility:
     def set_owner(self, new_owner):
         self.owner = new_owner
 
+    # Utility rent becomes 10x the dice value when both utilities are owned
     def on_monopoly(self):
         self.multiplier = 10
 

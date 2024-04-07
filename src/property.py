@@ -23,7 +23,8 @@ class Property:
 
     def on_monopoly_lost(self):
         self.monopoly = False
-
+    
+    ### Track the number of mortgaged properties in the set. No houses can be built if any property in the set is mortgaged
     def some_mortgaged(self):
         self.num_mortgaged_in_set += 1
 

@@ -15,9 +15,11 @@ class Railroad:
     def set_owner(self, new_owner):
         self.owner = new_owner
 
+    # Railroad rent increases by 2x when another railroad is bought
     def on_another_bought(self):
         self.multiplier *= 2
 
+    ### Railroads mortgaged don't have any special effects on other railroads
     def some_mortgaged(self):
         pass
 
@@ -44,10 +46,4 @@ class Railroad:
             self.is_mortgaged = False
             return self.un_mortgage_val
         else:
-            return -1
-    
-    def some_mortgaged(self):
-        pass
-
-    def some_unmortgaged(self):
-        pass
+            return -1    

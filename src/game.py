@@ -6,9 +6,7 @@ import random
 import basic_agent
 import time
 
-# Function to create a list of one color of properties and append
-# it to a given list. The properties always have one lower price
-# and the last one is of higher price. Similarly for rent.
+
 def create_properties(
     list_to_append,
     color,
@@ -18,6 +16,11 @@ def create_properties(
     low_rents,
     high_rents,
 ):
+    """
+    Function to create a list of one color of properties and append
+    it to a given list. The properties always have one lower price
+    and the last one is of higher price. Similarly for rent.
+    """
     list_props = []
     for _ in range(1, num_properties):
         list_props.append(Property(low_price, color, low_rents))
@@ -45,6 +48,7 @@ rents = [
     [50, 200, 600, 1400, 1700, 2000],
 ]
 
+
 # One Game Instance
 class Game:
     def __init__(self, num_players) -> None:
@@ -52,6 +56,7 @@ class Game:
         self.properties = []
         # First brown set
         create_properties(self.properties, 0, 60.0, 60.0, 2, rents[0], rents[1])
+        # Rest of the properties
         for c in range(1, 7):
             create_properties(
                 self.properties,
@@ -79,7 +84,8 @@ class Game:
         # Brown set
         self.map[0] = self.properties[0][0]
         self.map[2] = self.properties[0][1]
-        for (i, tier) in enumerate(self.properties[1:-1]):
+        # Rest
+        for i, tier in enumerate(self.properties[1:-1]):
             self.map[(i + 1) * 5] = tier[0]
             self.map[(i + 1) * 5 + 2] = tier[1]
             self.map[(i + 1) * 5 + 3] = tier[2]
@@ -95,9 +101,11 @@ class Game:
         self.map[11] = self.utilities[0]
         self.map[27] = self.utilities[1]
 
+        # Taxes
         self.map[3] = 200
         self.map[37] = 100
 
+        # 4 Players with 1500 starting money
         self.players = [Player(1500.0) for _ in range(num_players)]
         random.seed()
 
@@ -105,12 +113,14 @@ class Game:
         return random.randint(1, 6) + random.randint(1, 6)
 
     def play(self):
+        # Shuffle the order of players
         random.shuffle(self.players)
         limit = 10_000
         for i in range(limit):
             for player in self.players:
                 die_val = Game.roll_die()
                 location = player.move(die_val)
+                # if landed on tax
                 if isinstance(self.map[location], int):
                     rent_received = player.pay_rent(self.map[location])
                     while rent_received == None:
@@ -122,9 +132,11 @@ class Game:
                         self.players.remove(player)
                         continue
 
+                # if landed on unowned property
                 elif self.map[location].owner == -1:
                     basic_agent.buy_or_not(player, self.map[location])
 
+                # if landed on owned property by other player
                 elif self.map[location].get_owner() != player:
                     rent = self.map[location].get_rent(die_val)
                     rent_received = player.pay_rent(rent)
@@ -138,13 +150,12 @@ class Game:
                         continue
 
                 basic_agent.build_or_not(player)
-                # TRADE OR NOT -------------- !
+                # TODO: TRADE OR NOT -------------- !
                 # print(location, player.money)
 
             if len(self.players) == 1:
                 # print (self.players[0], "WINS!!!")
                 return i
-            # print()
         return 0
 
 
@@ -160,7 +171,6 @@ if __name__ == "__main__":
 
     # times.sort()
     avg = sum(times) / 100.0
-    # 43.971
     print("Average number of moves per game", g_won / 100)
     print("Average time per game", avg)
     print("Total Time", time.time() - t_s)
